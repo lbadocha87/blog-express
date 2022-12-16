@@ -22,7 +22,6 @@ module.exports = {
   },
 
   create: (req, res) => {
-    console.log(req.body);
     let newPost = new Post(req.body);
     newPost.save();
     res.redirect("/blog");

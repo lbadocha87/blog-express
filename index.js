@@ -24,12 +24,14 @@ app.engine(
 app.set("view engine", "hbs");
 
 const blogRouter = require("./routes/blogRouter");
+const userRouter = require("./routes/userRoutes");
 
 app.get("/", (_req, res) => {
   res.render("home");
 });
 
 app.use("/blog", blogRouter);
+app.use("/user", userRouter);
 
 app.listen(5500, () => {
   console.log("Server is working");
