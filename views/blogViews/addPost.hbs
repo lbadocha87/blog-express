@@ -1,0 +1,19 @@
+<div class="container">
+  <h2>Add post</h2>
+  <form method="POST" action="/blog/add">
+    <div class="mb-3">
+      <label for="title" class="form-label">Title</label>
+      <input
+        type="text"
+        class="form-control"
+        name="title"
+        id="title"
+      />
+    </div>
+    <div class="mb-3">
+      <label for="content" class="form-label">Content</label>
+      <textarea name="content" id="content" class="form-control"></textarea>
+    </div>
+    <button type="submit" class="btn btn-primary">Add</button>
+  </form>
+</div>

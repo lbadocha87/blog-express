@@ -1,0 +1,7 @@
+<div class="container">
+    <h2>Post list</h2>
+    {{#each posts}}
+        {{>post this}}
+    {{/each}}
+    <a class="btn btn-primary" href="/blog/add">Add post</a>
+</div>
