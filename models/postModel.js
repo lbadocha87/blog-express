@@ -13,7 +13,7 @@ const Post = new mongoose.Schema(
     content: String,
   },
   {
-    timestamp: true,
+    timestamps: true,
   }
 );
 
