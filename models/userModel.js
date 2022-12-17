@@ -1,11 +1,6 @@
 // Import the mongoose module
 const mongoose = require("mongoose");
-
-// Set up default mongoose connection
-mongoose.connect("mongodb://127.0.0.1/blog", {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
+const bcrypt = require("bcrypt");
 
 const User = new mongoose.Schema(
   {
@@ -16,5 +11,24 @@ const User = new mongoose.Schema(
     timestamps: true,
   }
 );
+
+User.pre("save", function (next) {
+  let user = this;
+
+  if (!user.isModified("password")) {
+    return next();
+  }
+
+  bcrypt.genSalt(10, function (err, salt) {
+    if (err) return next(err);
+
+    bcrypt.hash(user.password, salt, function (err, hash) {
+      if (err) return next(err);
+
+      user.password = hash;
+      next();
+    });
+  });
+});
 
 module.exports = mongoose.model("User", User);

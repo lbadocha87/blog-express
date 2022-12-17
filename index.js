@@ -2,6 +2,13 @@ const express = require("express");
 const app = express();
 const hbs = require("express-handlebars");
 
+// Import the mongoose module
+const mongoose = require("mongoose");
+
+// Set up default mongoose connection
+const mongoDB = "mongodb://127.0.0.1/blog";
+mongoose.connect(mongoDB, { useNewUrlParser: true, useUnifiedTopology: true })
+
 app.use(express.static("public"));
 app.use(express.urlencoded({ extended: true }));
 

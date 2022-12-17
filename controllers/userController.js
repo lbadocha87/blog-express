@@ -1,7 +1,7 @@
 const User = require("../models/userModel");
 
 module.exports = {
-  create: (req, res) => {
+  create: async (req, res) => {
     let newUser = new User(req.body);
     newUser.save(function (err) {
       if (err) {
