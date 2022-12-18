@@ -54,7 +54,7 @@ module.exports = {
               });
             }
             if (logged) {
-              const token = user.generateAuthToken();
+              const token = user.generateAuthToken(user);
 
               // Setting the auth token in cookies
               res.cookie("AuthToken", token);
