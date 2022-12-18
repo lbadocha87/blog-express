@@ -1,16 +1,17 @@
 const express = require("express");
 const app = express();
 const hbs = require("express-handlebars");
-
-// Import the mongoose module
+const cookieParser = require("cookie-parser");
 const mongoose = require("mongoose");
+const auth = require("./middlewares/authHelper");
 
 // Set up default mongoose connection
 const mongoDB = "mongodb://127.0.0.1/blog";
-mongoose.connect(mongoDB, { useNewUrlParser: true, useUnifiedTopology: true })
+mongoose.connect(mongoDB, { useNewUrlParser: true, useUnifiedTopology: true });
 
 app.use(express.static("public"));
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 
 app.engine(
   "hbs",
@@ -18,11 +19,11 @@ app.engine(
     extname: ".hbs",
     helpers: {
       splitString: function (string) {
-        if(string.length > 50) {
-            return string.split("").slice(1, 50).join("") + "...";
+        if (string.length > 50) {
+          return string.split("").slice(1, 50).join("") + "...";
         } else {
-            return string;
-        }   
+          return string;
+        }
       },
     },
   })
@@ -37,7 +38,7 @@ app.get("/", (_req, res) => {
   res.render("home");
 });
 
-app.use("/blog", blogRouter);
+app.use("/blog", auth, blogRouter);
 app.use("/user", userRouter);
 
 app.listen(5500, () => {

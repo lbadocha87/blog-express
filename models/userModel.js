@@ -1,6 +1,7 @@
 // Import the mongoose module
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 
 const User = new mongoose.Schema(
   {
@@ -34,5 +35,12 @@ User.pre("save", function (next) {
     });
   });
 });
+
+User.methods.generateAuthToken = function () {
+  const token = jwt.sign({ _id: this._id }, 'someSecretKey', {
+    expiresIn: "1h",
+  });
+  return token;
+};
 
 module.exports = mongoose.model("User", User);
