@@ -1,19 +1,21 @@
 const jwt = require("jsonwebtoken");
+const express = require("express");
+const app = express();
 
 module.exports = function (req, res, next) {
   try {
     const token = req.cookies["AuthToken"];
     if (!token) {
-      console.log("token not exist");
       res.render("userView/loginUser", {
         error: true,
-        message: "Please login",
+        message: "Please login to use app",
       });
-    }
+    } else {
+      const decoded = jwt.verify(token, "someSecretKey");
 
-    const decoded = jwt.verify(token, "someSecretKey");
-    req.user = decoded;
-    next();
+      res.locals.userId = decoded._id;
+      next();
+    }
   } catch {
     res.render("userView/loginUser", {
       error: true,
