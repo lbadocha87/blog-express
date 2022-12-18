@@ -18,7 +18,7 @@ app.engine(
   hbs.engine({
     extname: ".hbs",
     helpers: {
-      splitString: function (string) {
+      splitString: (string) => {
         if (string.length > 50) {
           return string.split("").slice(1, 50).join("") + "...";
         } else {

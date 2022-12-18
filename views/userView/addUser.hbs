@@ -7,6 +7,16 @@
   {{/if}}
   <form method="POST" action="/user/signup">
     <div class="mb-3">
+      <label for="name" class="form-label">User name</label>
+      <input
+        type="text"
+        class="form-control"
+        name="name"
+        id="name"
+        value="{{user.email}}"
+      />
+    </div>
+    <div class="mb-3">
       <label for="email" class="form-label">Email</label>
       <input
         type="email"

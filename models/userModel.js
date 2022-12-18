@@ -5,39 +5,32 @@ const jwt = require("jsonwebtoken");
 
 const User = new mongoose.Schema(
   {
+    name: { type: String, require: true, unique: true },
     email: { type: String, require: true, unique: true },
     password: { type: String, require: true },
+    posts: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Post",
+      },
+    ],
   },
   {
     timestamps: true,
   }
 );
 
-User.pre("save", function (next) {
+User.pre("save",  (next) => {
   let user = this;
 
   if (!user.isModified("password")) {
     return next();
   }
 
-  bcrypt.genSalt(10, function (err, salt) {
-    if (err) {
-      return next(err);
-    }
-
-    bcrypt.hash(user.password, salt, function (err, hashPassword) {
-      if (err) {
-        return next(err);
-      }
-
-      user.password = hashPassword;
-      next();
-    });
-  });
 });
 
-User.methods.generateAuthToken = function () {
-  const token = jwt.sign({ _id: this._id }, 'someSecretKey', {
+User.methods.generateAuthToken =  () => {
+  const token = jwt.sign({ _id: this._id }, "someSecretKey", {
     expiresIn: "1h",
   });
   return token;

@@ -2,7 +2,7 @@ const jwt = require("jsonwebtoken");
 const express = require("express");
 const app = express();
 
-module.exports = function (req, res, next) {
+module.exports = (req, res, next) => {
   try {
     const token = req.cookies["AuthToken"];
     if (!token) {
@@ -12,7 +12,6 @@ module.exports = function (req, res, next) {
       });
     } else {
       const decoded = jwt.verify(token, "someSecretKey");
-
       res.locals.userId = decoded._id;
       next();
     }

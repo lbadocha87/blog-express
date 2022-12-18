@@ -1,0 +1,10 @@
+<div class="container">
+  {{#each users}}
+    <div class="card mb-3">
+      <div class="card-body">
+        <h2 class="card-title">{{email}}</h2>
+        <a class="btn btn-primary" href="/blog?user={{_id}}">Show user posts</a>
+      </div>
+    </div>
+  {{/each}}
+</div>

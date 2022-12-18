@@ -1,10 +1,14 @@
 const Post = require("../models/postModel");
+const User = require("../models/userModel");
 
 module.exports = {
-  index: (_req, res) => {
-    Post.find()
+  index: (req, res) => {
+    const findQuery = req.query.user ? { author: req.query.user } : {};
+
+    Post.find(findQuery)
+      .populate("author")
       .lean()
-      .exec(function (err, posts) {
+      .exec((err, posts) => {
         if (err) {
           return res.send("Get posts error");
         }
@@ -13,7 +17,7 @@ module.exports = {
   },
 
   post: (req, res) => {
-    Post.findById(req.params.id).exec(function (err, post) {
+    Post.findById(req.params.id).exec((err, post) => {
       if (err) {
         return res.send("Get posts error");
       }
@@ -22,13 +26,21 @@ module.exports = {
   },
 
   create: (req, res) => {
-    let newPost = new Post(req.body);
+    let newPost = new Post({ ...req.body, author: res.locals.userId });
     newPost.save();
+
+    User.findById(res.locals.userId, (err, user) => {
+      if (err) return;
+
+      user.posts.push(newPost._id);
+      user.save();
+    });
+
     res.redirect("/blog");
   },
 
   update: (req, res) => {
-    Post.findByIdAndUpdate(req.params.id, req.body).exec(function (err, post) {
+    Post.findByIdAndUpdate(req.params.id, req.body).exec((err, post) => {
       if (err) {
         return res.send("Get posts error");
       }
@@ -37,7 +49,7 @@ module.exports = {
   },
 
   delete: (req, res) => {
-    Post.findOneAndDelete(req.params.id, req.body).exec(function (err) {
+    Post.findOneAndDelete(req.params.id, req.body).exec((err) => {
       if (err) {
         return res.send("Get posts error");
       }
@@ -46,7 +58,7 @@ module.exports = {
   },
 
   editForm: (req, res) => {
-    Post.findById(req.params.id).exec(function (err, post) {
+    Post.findById(req.params.id).exec((err, post) => {
       if (err) {
         return res.send("Get posts error");
       }

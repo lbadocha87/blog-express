@@ -2,9 +2,20 @@ const User = require("../models/userModel");
 const bcrypt = require("bcrypt");
 
 module.exports = {
+  index: (_req, res) => {
+    User.find()
+      .lean()
+      .exec((err, users) => {
+        if (err) {
+          res.send("Users list error");
+        } else {
+          res.render("userView/usersList", { users });
+        }
+      });
+  },
   create: (req, res) => {
     let newUser = new User(req.body);
-    newUser.save(function (err) {
+    newUser.save((err) => {
       if (err) {
         res.render("userView/addUser", {
           error: true,
@@ -17,12 +28,12 @@ module.exports = {
     });
   },
   login: (req, res) => {
-    User.findOne({ email: req.body.email }).exec(function (err, user) {
+    User.findOne({ email: req.body.email }).exec((err, user) => {
       if (err) {
         res.send("Error");
         return;
       }
-  
+
       if (!user) {
         res.render("userView/loginUser", {
           error: true,
@@ -34,7 +45,7 @@ module.exports = {
         bcrypt.compare(
           req.body.password,
           user.password,
-          function (err, logged) {
+           (err, logged) => {
             if (err) {
               res.render("userView/loginUser", {
                 error: true,
@@ -44,10 +55,10 @@ module.exports = {
             }
             if (logged) {
               const token = user.generateAuthToken();
-            
+
               // Setting the auth token in cookies
               res.cookie("AuthToken", token);
-              res.redirect('/blog')
+              res.redirect("/blog");
             } else {
               res.render("userView/loginUser", {
                 error: true,
