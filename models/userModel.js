@@ -20,17 +20,25 @@ const User = new mongoose.Schema(
   }
 );
 
-User.pre("save",  (next) => {
+User.pre('save', function(next) {
   let user = this;
+   
+  if(!user.isModified('password')) return next()
 
-  if (!user.isModified("password")) {
-    return next();
-  }
+  bcrypt.genSalt(Number(process.env.SALT), function(err, salt) {
+      if (err) return next(err);
 
-});
+      bcrypt.hash(user.password, salt, function(err, hash) {
+          if (err) return next(err);
+
+          user.password = hash;
+          next();
+      });
+  })
+})
 
 User.methods.generateAuthToken = (user) => {
-  const token = jwt.sign({ _id: user._id }, "someSecretKey", {
+  const token = jwt.sign({ _id: user._id }, process.env.AUTH_SECRET, {
     expiresIn: "1h",
   });
   return token;

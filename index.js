@@ -1,17 +1,20 @@
+require('dotenv').config();
+
 const express = require("express");
 const app = express();
 const hbs = require("express-handlebars");
 const cookieParser = require("cookie-parser");
 const mongoose = require("mongoose");
 const auth = require("./middlewares/authHelper");
+const authApi = require("./middlewares/authApiHelper");
 
-// Set up default mongoose connection
-const mongoDB = "mongodb://127.0.0.1/blog";
-mongoose.connect(mongoDB, { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect(process.env.DB_ADDRESS, { useNewUrlParser: true, useUnifiedTopology: true });
 
 app.use(express.static("public"));
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
+	
+app.use(express.json());
 
 app.engine(
   "hbs",
@@ -33,6 +36,8 @@ app.set("view engine", "hbs");
 
 const blogRouter = require("./routes/blogRouter");
 const userRouter = require("./routes/userRoutes");
+const blogApiRouter = require("./api/router/blogApiRouter");
+const userApiRouter = require("./api/router/userApiRouter");
 
 app.get("/", (_req, res) => {
   res.render("home");
@@ -40,7 +45,10 @@ app.get("/", (_req, res) => {
 
 app.use("/blog", auth, blogRouter);
 app.use("/user", userRouter);
+app.use("/api/blog", authApi, blogApiRouter);
+app.use("/api/user", userApiRouter);
 
-app.listen(5500, () => {
-  console.log("Server is working");
+
+app.listen(process.env.SERVER_PORT || 5500, () => {
+  console.log("Server is working on port " + process.env.SERVER_PORT);
 });
